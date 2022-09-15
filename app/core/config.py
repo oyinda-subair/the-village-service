@@ -27,6 +27,7 @@ class AppConfig:
     DATABASE_URI: str = "postgres://"
     HOSTNAME: str
     PORT: int
+    JWT_SECRET: str
 
     """
     Map environment variables to class fields according to these rules:
