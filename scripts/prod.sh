@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Heroku postgres addon
-export SQLALCHEMY_DATABASE_URI=${DATABASE_URL}
+export SQLALCHEMY_DATABASE_URI=${DATABASE_URI}
 
 # If there's a prestart.sh script in the /app directory or other path specified, run it before starting
 PRE_START_PATH=${PRE_START_PATH:-/app/prestart.sh}
