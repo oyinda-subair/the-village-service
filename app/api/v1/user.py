@@ -11,6 +11,7 @@ from app.core.security import verify_password
 from app.models.user import User
 from app.api import deps
 from app.core.init_logger import logger
+from app.schemas.user import Token
 
 
 router = APIRouter()
@@ -35,7 +36,7 @@ def create_user_signup(
     return user
 
 
-@router.post("/login")
+@router.post("/login", response_model=Token)
 def user_login(db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
     user = authenticate(email=form_data.username, password=form_data.password, db=db)
     if not user:
@@ -45,6 +46,12 @@ def user_login(db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequ
         "access_token": create_access_token(sub=user.id),
         "token_type": "bearer",
     }
+
+
+@router.get("/me", response_model=schemas.User)
+def read_users_me(current_user: User = Depends(deps.get_current_user)):
+    user = current_user
+    return user
 
 
 def authenticate(*, email: str, password: str, db: Session) -> Optional[User]:
