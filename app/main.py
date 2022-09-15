@@ -1,12 +1,15 @@
 from fastapi import FastAPI, APIRouter
 
+from app.api import deps
+from app.api.routes import api_router
+from app.core.settings import settings
 
-app = FastAPI(title="Recipe API", openapi_url="/openapi.json")
 
-api_router = APIRouter()
+root_router = APIRouter()
+app = FastAPI(title="The Village API", openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
 
-@api_router.get("/", status_code=200)
+@root_router.get("/", status_code=200)
 def root() -> dict:
     """
     Root GET
@@ -14,7 +17,8 @@ def root() -> dict:
     return {"msg": "Hello, World!"}
 
 
-app.include_router(api_router)
+app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(root_router)
 
 
 if __name__ == "__main__":

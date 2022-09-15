@@ -33,7 +33,7 @@ RUN pip install -U python-dotenv
 
 COPY . /app
 RUN chmod +x ./scripts/prestart.sh
-RUN chmod +x ./scripts/dev.sh
+RUN chmod +x ./scripts/prod.sh
 
 ENV PYTHONPATH=/app
 
@@ -46,4 +46,4 @@ USER app
 
 # Run the run script, it will check for an /app/prestart.sh script (e.g. for migrations)
 # And then will start Uvicorn
-CMD ["./scripts/dev.sh"]
+CMD ["./scripts/prod.sh"]

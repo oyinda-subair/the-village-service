@@ -22,11 +22,11 @@ def _parse_bool(val: Union[str, bool]) -> bool:  # pylint: disable=E1136
 
 
 class AppConfig:
-    DEBUG: bool = False
     ENV: str = "production"
     DATABASE_URI: str = "postgres://"
     HOSTNAME: str
     PORT: int
+    JWT_SECRET: str
 
     """
     Map environment variables to class fields according to these rules:

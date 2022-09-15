@@ -36,3 +36,12 @@ class UserInDB(UserInDBBase):
 # Additional properties to return via API
 class User(UserInDBBase):
     ...
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
