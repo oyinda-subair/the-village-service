@@ -8,6 +8,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+    HOSTNAME: 0.0.0.0
+    PORT: 8001
+    ENV: test
+    JWT_SECRET: ${{ secrets.JWT_SECRET }}
+    DATABASE_URI: ${{ secrets.DATABASE_URI }}
+
 jobs:
   tests:
     runs-on: ubuntu-latest

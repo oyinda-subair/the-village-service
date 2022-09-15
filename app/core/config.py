@@ -22,7 +22,6 @@ def _parse_bool(val: Union[str, bool]) -> bool:  # pylint: disable=E1136
 
 
 class AppConfig:
-    DEBUG: bool = False
     ENV: str = "production"
     DATABASE_URI: str = "postgres://"
     HOSTNAME: str
