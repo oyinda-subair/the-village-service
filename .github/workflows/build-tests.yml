@@ -52,4 +52,4 @@ jobs:
         run: poetry install
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       - name: Runnning app tests
-        run: poetry run pytest app/tests
+        run: poetry run ./scripts/test.sh

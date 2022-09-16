@@ -16,7 +16,7 @@ engine = create_engine(
     connection_uri,
 )
 
-if not database_exists(engine.url):
+if not settings.TEST_FLAG and not database_exists(engine.url):
     logger.info("Creating Database")
     create_database(engine.url)
 
