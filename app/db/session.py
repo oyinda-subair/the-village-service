@@ -17,6 +17,9 @@ engine = create_engine(
 )
 
 if not database_exists(engine.url):
+    print("=======================")
+    print(engine.url)
+    print("=======================")
     logger.info("Creating Database")
     create_database(engine.url)
 
