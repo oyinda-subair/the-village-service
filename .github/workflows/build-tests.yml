@@ -51,8 +51,5 @@ jobs:
       - name: Install dependencies
         run: poetry install
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      - name: Create Logger folder
-        run: |
-          touch the_village_service.log
       - name: Runnning app tests
         run: poetry run pytest app/tests
