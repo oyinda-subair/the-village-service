@@ -356,6 +356,21 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "loguru"
+version = "0.6.0"
+description = "Python logging made (stupidly) simple"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+colorama = {version = ">=0.3.4", markers = "sys_platform == \"win32\""}
+win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+dev = ["sphinx-rtd-theme (>=0.4.3)", "sphinx-autobuild (>=0.7.1)", "Sphinx (>=4.1.1)", "isort (>=5.1.1)", "black (>=19.10b0)", "pytest-cov (>=2.7.1)", "pytest (>=4.6.2)", "tox (>=3.9.0)", "flake8 (>=3.7.7)", "docutils (==0.16)", "colorama (>=0.3.4)"]
+
+[[package]]
 name = "mako"
 version = "1.2.1"
 description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
@@ -691,6 +706,31 @@ pymysql = ["pymysql (<1)", "pymysql"]
 sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
+name = "sqlalchemy-utils"
+version = "0.38.3"
+description = "Various utility functions for SQLAlchemy."
+category = "main"
+optional = false
+python-versions = "~=3.6"
+
+[package.dependencies]
+SQLAlchemy = ">=1.3"
+
+[package.extras]
+arrow = ["arrow (>=0.3.4)"]
+babel = ["Babel (>=1.3)"]
+color = ["colour (>=0.0.4)"]
+encrypted = ["cryptography (>=0.6)"]
+intervals = ["intervals (>=0.7.1)"]
+password = ["passlib (>=1.6,<2.0)"]
+pendulum = ["pendulum (>=2.0.5)"]
+phone = ["phonenumbers (>=5.9.2)"]
+test = ["pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc", "backports.zoneinfo"]
+test_all = ["Babel (>=1.3)", "Jinja2 (>=2.3)", "Pygments (>=1.2)", "arrow (>=0.3.4)", "colour (>=0.0.4)", "cryptography (>=0.6)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "furl (>=0.4.1)", "intervals (>=0.7.1)", "isort (>=4.2.2)", "passlib (>=1.6,<2.0)", "pendulum (>=2.0.5)", "pg8000 (>=1.12.4)", "phonenumbers (>=5.9.2)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pymysql", "pyodbc", "pytest (>=2.7.1)", "python-dateutil", "python-dateutil (>=2.6)", "pytz (>=2014.2)", "backports.zoneinfo"]
+timezone = ["python-dateutil"]
+url = ["furl (>=0.4.1)"]
+
+[[package]]
 name = "starlette"
 version = "0.19.1"
 description = "The little ASGI library that shines."
@@ -777,6 +817,17 @@ h11 = ">=0.8"
 standard = ["colorama (>=0.4)", "httptools (>=0.4.0)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "watchfiles (>=0.13)", "websockets (>=10.0)"]
 
 [[package]]
+name = "win32-setctime"
+version = "1.1.0"
+description = "A small Python utility to set file creation time on Windows"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.extras]
+dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
+
+[[package]]
 name = "wrapt"
 version = "1.14.1"
 description = "Module for decorators, wrappers and monkey patching."
@@ -787,7 +838,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "fbbe77fa79c91873434b00c5c16fa3503d8238895e067865d3dc8dd570619d40"
+content-hash = "54f9e39e2a839bdcb039ab132c61441ad95521df728b2dcbcfcfc499d2631d51"
 
 [metadata.files]
 alembic = [
@@ -1080,6 +1131,10 @@ lazy-object-proxy = [
     {file = "lazy_object_proxy-1.7.1-cp39-cp39-win_amd64.whl", hash = "sha256:677ea950bef409b47e51e733283544ac3d660b709cfce7b187f5ace137960d61"},
     {file = "lazy_object_proxy-1.7.1-pp37.pp38-none-any.whl", hash = "sha256:d66906d5785da8e0be7360912e99c9188b70f52c422f9fc18223347235691a84"},
 ]
+loguru = [
+    {file = "loguru-0.6.0-py3-none-any.whl", hash = "sha256:4e2414d534a2ab57573365b3e6d0234dfb1d84b68b7f3b948e6fb743860a77c3"},
+    {file = "loguru-0.6.0.tar.gz", hash = "sha256:066bd06758d0a513e9836fd9c6b5a75bfb3fd36841f4b996bc60b547a309d41c"},
+]
 mako = [
     {file = "Mako-1.2.1-py3-none-any.whl", hash = "sha256:df3921c3081b013c8a2d5ff03c18375651684921ae83fd12e64800b7da923257"},
     {file = "Mako-1.2.1.tar.gz", hash = "sha256:f054a5ff4743492f1aa9ecc47172cb33b42b9d993cffcc146c9de17e717b0307"},
@@ -1309,6 +1364,10 @@ sqlalchemy = [
     {file = "SQLAlchemy-1.4.40-cp39-cp39-win_amd64.whl", hash = "sha256:bf073c619b5a7f7cd731507d0fdc7329bee14b247a63b0419929e4acd24afea8"},
     {file = "SQLAlchemy-1.4.40.tar.gz", hash = "sha256:44a660506080cc975e1dfa5776fe5f6315ddc626a77b50bf0eee18b0389ea265"},
 ]
+sqlalchemy-utils = [
+    {file = "SQLAlchemy-Utils-0.38.3.tar.gz", hash = "sha256:9f9afba607a40455cf703adfa9846584bf26168a0c5a60a70063b70d65051f4d"},
+    {file = "SQLAlchemy_Utils-0.38.3-py3-none-any.whl", hash = "sha256:5c13b5d08adfaa85f3d4e8ec09a75136216fad41346980d02974a70a77988bf9"},
+]
 starlette = [
     {file = "starlette-0.19.1-py3-none-any.whl", hash = "sha256:5a60c5c2d051f3a8eb546136aa0c9399773a689595e099e0877704d5888279bf"},
     {file = "starlette-0.19.1.tar.gz", hash = "sha256:c6d21096774ecb9639acad41b86b7706e52ba3bf1dc13ea4ed9ad593d47e24c7"},
@@ -1340,6 +1399,10 @@ urllib3 = [
 uvicorn = [
     {file = "uvicorn-0.18.3-py3-none-any.whl", hash = "sha256:0abd429ebb41e604ed8d2be6c60530de3408f250e8d2d84967d85ba9e86fe3af"},
     {file = "uvicorn-0.18.3.tar.gz", hash = "sha256:9a66e7c42a2a95222f76ec24a4b754c158261c4696e683b9dadc72b590e0311b"},
+]
+win32-setctime = [
+    {file = "win32_setctime-1.1.0-py3-none-any.whl", hash = "sha256:231db239e959c2fe7eb1d7dc129f11172354f98361c4fa2d6d2d7e278baa8aad"},
+    {file = "win32_setctime-1.1.0.tar.gz", hash = "sha256:15cf5750465118d6929ae4de4eb46e8edae9a5634350c01ba582df868e932cb2"},
 ]
 wrapt = [
     {file = "wrapt-1.14.1-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:1b376b3f4896e7930f1f772ac4b064ac12598d1c38d04907e696cc4d794b43d3"},
