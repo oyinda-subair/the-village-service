@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 
@@ -14,6 +15,16 @@ dotenv_path = join(ROOT, '.env')
 load_dotenv(dotenv_path)
 
 
+class DBSettings(BaseSettings):
+    SQLALCHEMY_DATABASE_URI: str = Config.DATABASE_URI
+    FIRST_SUPERUSER: EmailStr = os.environ.get("FIRST_SUPERUSER")
+    FIRST_SUPERUSER_PW: str = os.environ.get("FIRST_SUPERUSER_PW")
+
+
+class LoggingSettings(BaseSettings):
+    LOGGING_LEVEL: int = logging.INFO
+
+
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     JWT_SECRET: str = Config.JWT_SECRET
@@ -22,11 +33,11 @@ class Settings(BaseSettings):
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
 
-    SQLALCHEMY_DATABASE_URI: str = Config.DATABASE_URI
-    FIRST_SUPERUSER: EmailStr = os.environ.get("FIRST_SUPERUSER")
-    FIRST_SUPERUSER_PW: str = os.environ.get("FIRST_SUPERUSER_PW")
+    logging: LoggingSettings = LoggingSettings()
+    db: DBSettings = DBSettings()
 
     class Config:
         case_sensitive = True
+
 
 settings = Settings()
