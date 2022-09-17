@@ -1,6 +1,5 @@
 from fastapi import FastAPI, APIRouter
 
-from app.api import deps
 from app.api.routes import api_router
 from app.core.settings import settings
 from app.core.init_logger import setup_app_logging

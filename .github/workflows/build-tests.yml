@@ -15,6 +15,7 @@ env:
     JWT_SECRET: ${{ secrets.JWT_SECRET }}
     DATABASE_URI: ${{ secrets.DATABASE_URI }}
     TEST_DATABASE_URI: ${{ secrets.TEST_DATABASE_URI }}
+    TEST_FLAG: true
 
 jobs:
   tests:
