@@ -17,6 +17,7 @@ load_dotenv(dotenv_path)
 
 class DBSettings(BaseSettings):
     SQLALCHEMY_DATABASE_URI: str = Config.DATABASE_URI
+    TEST_SQLALCHEMY_DATABASE_URL = os.environ.get("TEST_DATABASE_URI")
     FIRST_SUPERUSER: EmailStr = os.environ.get("FIRST_SUPERUSER")
     FIRST_SUPERUSER_PW: str = os.environ.get("FIRST_SUPERUSER_PW")
 

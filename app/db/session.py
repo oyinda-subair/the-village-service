@@ -9,6 +9,9 @@ from app.core.settings import settings
 
 connection_uri = settings.db.SQLALCHEMY_DATABASE_URI
 
+if settings.TEST_FLAG:
+    connection_uri = settings.db.TEST_SQLALCHEMY_DATABASE_URL
+
 if connection_uri.startswith("postgres://"):
     connection_uri = connection_uri.replace("postgres://", "postgresql://", 1)
 
@@ -16,11 +19,7 @@ engine = create_engine(
     connection_uri,
 )
 
-print("=======================")
-print(connection_uri)
-print("=======================")
-
-if not settings.TEST_FLAG and not database_exists(engine.url):
+if not database_exists(engine.url):
     logger.info("Creating Database")
     create_database(engine.url)
 
