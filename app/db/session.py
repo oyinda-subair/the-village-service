@@ -10,6 +10,7 @@ from app.core.settings import settings
 connection_uri = settings.db.SQLALCHEMY_DATABASE_URI
 
 if settings.TEST_FLAG:
+    print("========================")
     connection_uri = settings.db.TEST_SQLALCHEMY_DATABASE_URL
 
 if connection_uri.startswith("postgres://"):
