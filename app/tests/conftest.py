@@ -12,7 +12,7 @@ from app.main import app
 from app.api import deps
 from app.db.config import Base
 
-TEST_SQLALCHEMY_DATABASE_URL = os.environ.get("TEST_DATABASE_URI") or os.environ.get("DATABASE_URI")
+TEST_SQLALCHEMY_DATABASE_URL = os.environ.get("TEST_DATABASE_URI")
 
 engine = create_engine(TEST_SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
