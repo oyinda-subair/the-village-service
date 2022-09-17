@@ -3,4 +3,4 @@
 export PYTHONPATH=$PWD
 export TEST_FLAG=true
 
-exec pytest app/tests
+exec TEST_FLAG=true pytest app/tests
