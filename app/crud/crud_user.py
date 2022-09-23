@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Dict, Optional, Union
 
 from sqlalchemy.orm import Session
@@ -29,6 +30,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             update_data = obj_in
         else:
             update_data = obj_in.dict(exclude_unset=True)
+        update_data["updated_at"] = datetime.now()
 
         return super().update(db, db_obj=db_obj, obj_in=update_data)
 
