@@ -25,6 +25,8 @@ def upgrade() -> None:
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("is_superuser", sa.Boolean(), nullable=True),
         sa.Column("hashed_password", sa.String(), nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
+        sa.Column('updated_at', sa.TIMESTAMP, nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_user_email"), "user", ["email"], unique=False)
