@@ -1,9 +1,11 @@
 import time
 from fastapi import FastAPI, APIRouter, Request
+from fastapi.responses import JSONResponse
 
 from app.api.routes import api_router
 from app.core.settings import settings
 from app.core.init_logger import setup_app_logging
+from app.core.exception_handler import CustomException
 
 setup_app_logging(config=settings)
 root_router = APIRouter()
@@ -16,6 +18,14 @@ def root() -> dict:
     Root GET
     """
     return {"msg": "Hello, World!"}
+
+
+@app.exception_handler(CustomException)
+async def custom_exception_handler(request: Request, exc: CustomException):
+    return JSONResponse(
+        status_code=exc.code,
+        content={"message": f"Exception Occurred! Reason -> {exc.message}"},
+    )
 
 
 @app.middleware("http")
