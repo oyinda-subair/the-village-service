@@ -1,4 +1,4 @@
-from app import crud
+from app import controller
 from app.core.settings import settings
 from app.schemas.user import UserCreate
 from app.tests import UserFactory, generate_token
@@ -21,7 +21,7 @@ def test_create_user(client):
 def test_user_login(client, session):
     user_create = UserCreate(first_name="Oyinda", surname="S", email="oyinda@example.com",
                              password="password1", is_superuser=False)
-    user_data = crud.user.create(
+    user_data = controller.user.create(
         db=session,
         obj_in=user_create)
     response = client.post(f"{settings.API_V1_STR}/users/login",
