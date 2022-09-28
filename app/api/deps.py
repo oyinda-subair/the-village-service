@@ -1,14 +1,16 @@
 from typing import Generator
+from app import controller
 from app.db.session import SessionLocal
 from app.core.authentication import oauth2_scheme
-from app.models.user import User
+from app.core.exception_handler import CustomException
 from app.core.settings import settings
-from app import crud
+from app.models.user import User
 from app.schemas.user import TokenData
 
 from fastapi import Depends, HTTPException, status
 from jose import jwt, JWTError
 from sqlalchemy.orm.session import Session
+from loguru import logger
 
 
 def get_db() -> Generator:
@@ -44,6 +46,7 @@ async def get_current_user(
 
     user = db.query(User).filter(User.id == token_data.username).first()
     if user is None:
+        logger.error("Deps(get_current_user): Could not validate credentials")
         raise credentials_exception
     return user
 
@@ -51,8 +54,9 @@ async def get_current_user(
 def get_current_active_superuser(
     current_user: User = Depends(get_current_user),
 ) -> User:
-    if not crud.user.is_superuser(current_user):
-        raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
+    if not controller.user.is_superuser(current_user):
+        logger.error("Deps(get_current_active_superuser):  The user doesn't have enough privileges")
+        raise CustomException(
+            status.HTTP_403_FORBIDDEN, "The user doesn't have enough privileges"
         )
     return current_user

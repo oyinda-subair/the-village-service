@@ -1,7 +1,7 @@
 import logging
 from sqlalchemy.orm import Session
 
-import crud
+import controller
 import schemas
 from db import base  # noqa: F401
 from app.core.settings import settings
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def init_db(db: Session) -> None:
     if settings.db.FIRST_SUPERUSER:
-        user = crud.user.get_by_email(db, email=settings.db.FIRST_SUPERUSER)
+        user = controller.user.get_by_email(db, email=settings.db.FIRST_SUPERUSER)
         if not user:
             user_in = schemas.UserCreate(
                 full_name="Initial Super User",
@@ -19,7 +19,7 @@ def init_db(db: Session) -> None:
                 is_superuser=True,
                 password=settings.db.FIRST_SUPERUSER_PW,
             )
-            user = crud.user.create(db, obj_in=user_in)  # noqa: F841
+            user = controller.user.create(db, obj_in=user_in)  # noqa: F841
         else:
             logger.warning(
                 "Skipping creating superuser. User with email "
