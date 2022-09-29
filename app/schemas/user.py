@@ -1,7 +1,9 @@
 from datetime import datetime
+from tokenize import String
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr
+import uuid
 
 
 class UserBase(BaseModel):
@@ -23,8 +25,8 @@ class UserUpdate(UserBase):
 
 
 class UserInDBBase(UserBase):
-    id: Optional[int] = None
-    created_at: Optional[datetime] = None
+    id: Optional[uuid.UUID] = None
+    created_at: datetime
     updated_at: Optional[datetime] = None
 
     class Config:

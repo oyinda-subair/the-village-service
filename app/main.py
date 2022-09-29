@@ -6,7 +6,9 @@ from app.api.routes import api_router
 from app.core.settings import settings
 from app.core.init_logger import setup_app_logging
 from app.core.exception_handler import CustomException
+import sys
 
+sys.path.append('./../')
 setup_app_logging(config=settings)
 root_router = APIRouter()
 app = FastAPI(title="The Village API", openapi_url=f"{settings.API_V1_STR}/openapi.json")
