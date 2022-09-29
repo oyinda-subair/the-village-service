@@ -1,4 +1,5 @@
 from typing import Any, Optional
+import uuid
 
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -60,9 +61,9 @@ def read_users_me(current_user: User = Depends(deps.get_current_user)):
 @router.put("/{user_id}", response_model=schemas.User, status_code=200)
 def user_update(
         *, db: Session = Depends(deps.get_db),
-        user_id: int,
+        user_id: str,
         user_in: schemas.UserUpdate, current_user: User = Depends(deps.get_current_user)) -> Any:
-    user = _get_user(db, user_id, current_user.id)
+    user = _get_user(db, uuid.UUID(user_id), current_user.id)
     updated_user = controller.user.update(db=db, db_obj=user, obj_in=user_in)
     return updated_user
 
@@ -70,9 +71,9 @@ def user_update(
 @router.delete("/{user_id}", status_code=204)
 def delete_user(
         *, db: Session = Depends(deps.get_db),
-        user_id: int, current_user: User = Depends(deps.get_current_user)) -> Any:
-    user = _get_user(db, user_id, current_user.id)
-    return controller.user.delete(db=db, id=user_id)
+        user_id: str, current_user: User = Depends(deps.get_current_user)) -> Any:
+    _ = _get_user(db, uuid.UUID(user_id), current_user.id)
+    return controller.user.delete(db=db, id=uuid.UUID(user_id))
 
 
 def authenticate(*, email: str, password: str, db: Session) -> Optional[User]:
@@ -84,7 +85,7 @@ def authenticate(*, email: str, password: str, db: Session) -> Optional[User]:
     return user
 
 
-def _get_user(db: Session, id: int, current_user_id: int) -> Any:
+def _get_user(db: Session, id: uuid.UUID, current_user_id: uuid.UUID) -> Any:
     user = controller.user.get(db, id=current_user_id)
     if not user:
         logger.error(f"User with ID: {current_user_id} not found.")

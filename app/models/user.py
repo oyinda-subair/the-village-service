@@ -1,10 +1,13 @@
 from sqlalchemy import Integer, String, Column, Boolean, TIMESTAMP, func
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.db.config import Base
 
+import uuid
+
 
 class User(Base):
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
     first_name = Column(String(256), nullable=True)
     surname = Column(String(256), nullable=True)
     email = Column(String, index=True, nullable=False)
