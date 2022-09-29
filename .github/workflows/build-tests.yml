@@ -85,5 +85,11 @@ jobs:
           chmod +x ./scripts/prestart.sh
           poetry run ./scripts/prestart.sh
 
+      - name: set pythonpath
+        run: |
+          export PYTHONPATH=$PWD
+          echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
+
       - name: Runnning app tests
-        run: TEST_FLAG=true poetry run pytest
+        run: |
+          TEST_FLAG=true poetry run pytest
