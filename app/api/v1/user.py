@@ -44,7 +44,7 @@ def user_login(db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequ
     user = authenticate(email=form_data.username, password=form_data.password, db=db)
     if not user:
         logger.error("Incorrect username or password 😬")
-        raise CustomException(status.HTTP_400_BAD_REQUEST, "Incorrect username or password 😬")
+        raise CustomException(status.HTTP_401_UNAUTHORIZED, "Incorrect username or password 😬")
 
     return {
         "access_token": create_access_token(sub=user.id),
