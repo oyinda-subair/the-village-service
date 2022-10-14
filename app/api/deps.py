@@ -40,11 +40,11 @@ async def get_current_user(
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(user_id=username)
     except JWTError:
         raise credentials_exception
 
-    user = db.query(User).filter(User.id == token_data.username).first()
+    user = db.query(User).filter(User.id == token_data.user_id).first()
     if user is None:
         logger.error("Deps(get_current_user): Could not validate credentials")
         raise credentials_exception
