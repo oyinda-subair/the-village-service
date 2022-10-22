@@ -11,9 +11,11 @@ from sqlalchemy.orm import sessionmaker
 from app.main import app
 from app.api import deps
 from app.db.config import Base
-from .factories import UserFactory
+from .factories import CommentFactory, PostFactory, UserFactory
 
 register(UserFactory)
+register(PostFactory)
+register(CommentFactory)
 
 TEST_SQLALCHEMY_DATABASE_URL = os.environ.get("TEST_DATABASE_URI")
 

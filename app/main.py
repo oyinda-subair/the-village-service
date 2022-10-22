@@ -1,5 +1,9 @@
+from asyncio.log import logger
+from email import message
 import time
-from fastapi import FastAPI, APIRouter, Request
+from fastapi import FastAPI, APIRouter, Request, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import ExceptionMiddleware
@@ -27,7 +31,7 @@ if settings.cors.BACKEND_CORS_ORIGINS:
     )
 
 
-@root_router.get("/", status_code=200)
+@root_router.get("/healthchecker", status_code=200)
 def root() -> dict:
     """
     Root GET
@@ -39,12 +43,20 @@ def root() -> dict:
 async def custom_exception_handler(request: Request, exc: CustomException):
     return JSONResponse(
         status_code=exc.code,
-        content={
+        content=jsonable_encoder({
             "status_code": exc.code,
             "message": exc.message,
             "exception": f"Exception Occurred! Reason -> {exc.message}"
-        },
+        }),
     )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    content = jsonable_encoder({"detail": exc.errors(),
+                                "body": exc.body})
+    logger.error(f"OMG! The client sent invalid data!: {content}")
+    return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 @app.middleware("http")

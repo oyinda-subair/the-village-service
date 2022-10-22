@@ -17,9 +17,9 @@ router = APIRouter()
 # GET admin/users/ (all users)
 @router.get("/users", response_model=DataResponseModel[List[schemas.User]], status_code=200)
 def fetch_all_users(
+        skip: int = 0, limit: int = 100,
         *,
-        db: Session = Depends(deps.get_db),
-        skip: int = 0, limit: int = 100) -> Any:
+        db: Session = Depends(deps.get_db)) -> Any:
     users = controller.admin.get_multi(db, skip=skip, limit=limit)
     return DataResponseModel(success=True, data=users)
 

@@ -1,5 +1,6 @@
 import logging
 from sqlalchemy.orm import Session
+from app.schemas.base import UserRole
 
 import controller
 import schemas
@@ -18,6 +19,7 @@ def init_db(db: Session) -> None:
                 email=settings.db.FIRST_SUPERUSER,
                 is_superuser=True,
                 password=settings.db.FIRST_SUPERUSER_PW,
+                role=UserRole.admin,
             )
             user = controller.user.create(db, obj_in=user_in)  # noqa: F841
         else:
@@ -29,5 +31,5 @@ def init_db(db: Session) -> None:
         logger.warning(
             "Skipping creating superuser.  FIRST_SUPERUSER needs to be "
             "provided as an env variable. "
-            "e.g.  FIRST_SUPERUSER=admin@api.coursemaker.io"
+            "e.g.  FIRST_SUPERUSER=admin@api.antoniaandgrace.com"
         )

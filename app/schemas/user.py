@@ -1,18 +1,14 @@
-from datetime import datetime, timedelta
-from tokenize import String
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr
-import uuid
+from app.schemas.base import UserBase, UserInDBBase
 
+from app.schemas.post import *
 
-class UserBase(BaseModel):
-    first_name: Optional[str]
-    surname: Optional[str]
-    email: Optional[EmailStr] = None
-    is_superuser: bool = False
-
-
+class UserResponse(UserInDBBase):
+    created_at: datetime
+    updated_at: datetime
 # Properties to receive via API on creation
 class UserCreate(UserBase):
     email: EmailStr
@@ -22,15 +18,6 @@ class UserCreate(UserBase):
 # Properties to receive via API on update
 class UserUpdate(UserBase):
     updated_at: datetime = datetime.now()
-
-
-class UserInDBBase(UserBase):
-    id: Optional[uuid.UUID] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-
-    class Config:
-        orm_mode = True
 
 
 # Additional properties stored in DB but not returned by API

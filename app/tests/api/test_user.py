@@ -15,7 +15,8 @@ def test_create_user(client):
     # Then
     assert response.status_code == 201
     for key in data.keys():
-        assert key in ["id", "first_name", "surname", "email", "is_superuser", "created_at", "updated_at"]
+        assert key in ["id", "first_name", "surname", "email", "role",
+                       "is_superuser", "created_at", "updated_at", "posts"]
 
 
 def test_user_login(client, session):
