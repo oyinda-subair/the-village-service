@@ -1,6 +1,6 @@
 import logging
 from sqlalchemy.orm import Session
-from app.schemas.user import UserRole
+from app.schemas.base import UserRole
 
 import controller
 import schemas
