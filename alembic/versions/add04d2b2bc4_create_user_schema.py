@@ -25,17 +25,19 @@ def upgrade() -> None:
         sa.Column("first_name", sa.String(length=256), nullable=True),
         sa.Column("surname", sa.String(length=256), nullable=True),
         sa.Column("email", sa.String(), nullable=False),
+        sa.Column("role", sa.String(), nullable=False),
         sa.Column("is_superuser", sa.Boolean(), nullable=True),
         sa.Column("hashed_password", sa.String(), nullable=False),
         sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
         sa.Column('updated_at', sa.TIMESTAMP, nullable=True),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint('email')
     )
     op.create_index(op.f("ix_user_email"), "user", ["email"], unique=False)
-    op.create_index(op.f("ix_user_id"), "user", ["id"], unique=False)
+    op.create_index(op.f("ix_user_role"), "user", ["role"], unique=False)
 
 
 def downgrade() -> None:
-    op.drop_index(op.f('ix_user_id'), table_name='user')
     op.drop_index(op.f('ix_user_email'), table_name='user')
+    op.drop_index(op.f('ix_user_role'), table_name='user')
     op.drop_table('user')

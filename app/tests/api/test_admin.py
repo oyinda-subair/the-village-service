@@ -1,4 +1,5 @@
 from app.core.settings import settings
+from app.schemas.base import UserRole
 from app.tests import UserFactory, generate_token, get_random_string
 from app.core.security import get_password_hash
 
@@ -8,7 +9,7 @@ def test_fetch_all_users(client):
     UserFactory(hashed_password=get_password_hash(get_random_string()))
     UserFactory(hashed_password=get_password_hash(get_random_string()))
 
-    user = UserFactory(hashed_password=get_password_hash(get_random_string()), is_superuser=True)
+    user = UserFactory(hashed_password=get_password_hash(get_random_string()), is_superuser=True, role=UserRole.ADMIN)
     token = generate_token(user)
     header = {
         'Authorization': 'Bearer {}'.format(token['access_token'])
@@ -28,7 +29,7 @@ def test_does_not_fetch_all_users_for_non_superuser(client):
     }
     response = client.get(f"{settings.API_V1_STR}/admin/users", headers=header)
 
-    assert response.status_code == 403
+    assert response.status_code == 401
 
 
 def test_does_not_fetch_all_users_for_unauthenticated(client):
@@ -43,7 +44,8 @@ def test_fetch_user_by_id(client):
     user_1 = UserFactory(hashed_password=get_password_hash(get_random_string()))
     user_2 = UserFactory(hashed_password=get_password_hash(get_random_string()))
 
-    admin_user = UserFactory(hashed_password=get_password_hash(get_random_string()), is_superuser=True)
+    admin_user = UserFactory(hashed_password=get_password_hash(
+        get_random_string()), is_superuser=True, role=UserRole.ADMIN)
     token = generate_token(admin_user)
     header = {
         'Authorization': 'Bearer {}'.format(token['access_token'])
@@ -60,7 +62,8 @@ def test_delete_user_by_id(client, session):
     user_1 = UserFactory(hashed_password=get_password_hash(get_random_string()))
     user_2 = UserFactory(hashed_password=get_password_hash(get_random_string()))
 
-    admin_user = UserFactory(hashed_password=get_password_hash(get_random_string()), is_superuser=True)
+    admin_user = UserFactory(hashed_password=get_password_hash(
+        get_random_string()), is_superuser=True, role=UserRole.ADMIN)
     token = generate_token(admin_user)
     header = {
         'Authorization': 'Bearer {}'.format(token['access_token'])
