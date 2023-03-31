@@ -12,6 +12,7 @@ env:
     HOSTNAME: 0.0.0.0
     PORT: 8001
     ENV: test
+    ENVIRONMENT: test
     JWT_SECRET: ${{ secrets.JWT_SECRET }}
     DATABASE_URI: ${{ secrets.DATABASE_URI }}
     TEST_DATABASE_URI: ${{ secrets.TEST_DATABASE_URI }}
