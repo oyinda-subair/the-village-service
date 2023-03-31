@@ -3,7 +3,7 @@ from pydantic import BaseModel, validator, Field
 from pydantic.generics import GenericModel
 
 
-DataT = TypeVar('DataT')
+M = TypeVar("M", bound=BaseModel)
 
 
 class Error(BaseModel):
@@ -11,18 +11,20 @@ class Error(BaseModel):
     message: str
 
 
-class DataResponseModel(GenericModel, Generic[DataT]):
-    success: bool = True
-    error_msg: Optional[Error]
-    data: Optional[DataT]
+class BaseGenericResponse(GenericModel):
+    success: bool
 
-    # @validator('error_msg', always=True)
-    # def check_consistency(cls, v, values):
-    #     if v is not None and values['data'] is not None:
-    #         raise ValueError('must not provide both data and error')
-    #     if v is None and values.get('data') is None:
-    #         raise ValueError('must provide data or error')
-    #     return v
+
+class DataListResponse(BaseGenericResponse, Generic[M]):
+    count: Optional[int]
+    data: list[M]
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class DataResponse(BaseGenericResponse, Generic[M]):
+    data: Optional[M]
 
     class Config:
         allow_population_by_field_name = True

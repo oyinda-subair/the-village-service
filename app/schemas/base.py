@@ -17,19 +17,28 @@ class UserBase(BaseModel):
     role: Optional[UserRole] = UserRole.USER
 
 
+class PostBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    content: Optional[str] = None
+    category: str
+    image_url: Optional[str] = None
+    user_id: Optional[uuid.UUID] = None
+
+
+class CommentBase(BaseModel):
+    content: str
+    user_id: Optional[uuid.UUID] = None
+    post_id: Optional[uuid.UUID] = None
+
+
 class UserInDBBase(UserBase):
-    id: Optional[uuid.UUID] = None
+    id: uuid.UUID
+    # posts: Optional[list[PostBase]] = None
+    # comments: Optional[list[CommentBase]] = None
 
     class Config:
         orm_mode = True
-
-
-class PostBase(BaseModel):
-    title: str
-    content: Optional[str] = None
-    category: str
-    image_url: str
-    user_id: Optional[uuid.UUID] = None
 
 
 class PostInDBBase(PostBase):
@@ -38,12 +47,6 @@ class PostInDBBase(PostBase):
 
     class Config:
         orm_mode = True
-
-
-class CommentBase(BaseModel):
-    content: str
-    user_id: Optional[uuid.UUID] = None
-    post_id: Optional[uuid.UUID] = None
 
 
 class CommentInDBBase(CommentBase):

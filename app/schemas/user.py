@@ -6,10 +6,13 @@ from app.schemas.base import UserBase, UserInDBBase
 
 from app.schemas.post import *
 
+
 class UserResponse(UserInDBBase):
     created_at: datetime
     updated_at: datetime
 # Properties to receive via API on creation
+
+
 class UserCreate(UserBase):
     email: EmailStr
     password: str
@@ -37,3 +40,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: Optional[str] = None
+
+
+class ShortUserResponse(UserBase):
+    email: EmailStr

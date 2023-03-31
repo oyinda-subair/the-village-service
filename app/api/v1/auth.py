@@ -1,0 +1,68 @@
+from typing import Any, Optional
+
+from fastapi import APIRouter, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm.session import Session
+
+from app import controller
+from app import schemas
+from app.api import deps
+from app.core.authentication import create_access_token
+from app.core.init_logger import logger
+from app.core.security import verify_password
+from app.core.exception_handler import CustomException
+from app.models.user import User
+from app.schemas.common import DataResponse
+from app.schemas.user import ShortUserResponse, Token
+from loguru import logger
+
+router = APIRouter()
+
+
+@router.post("/register", response_model=DataResponse[schemas.ShortUserResponse], status_code=201)
+def register_user(
+    *,
+    db: Session = Depends(deps.get_db),
+    user_in: schemas.UserCreate,
+) -> Any:
+
+    user = db.query(User).filter(User.email == user_in.email).first()
+    if user:
+        logger.error("The user with this email already exists in the system")
+        raise CustomException(
+            code=status.HTTP_409_CONFLICT,
+            message="The user with this email already exists in the system",
+        )
+    user = controller.user.create(db=db, obj_in=user_in)
+    data = ShortUserResponse(
+        first_name=user.first_name,
+        surname=user.surname,
+        email=user.email,
+        is_superuser=user.is_superuser,
+        role=user.role
+    )
+
+    return DataResponse(success=True, data=data)
+
+
+@router.post("/login", response_model=Token)
+def user_login(db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
+    user = authenticate(email=form_data.username, password=form_data.password, db=db)
+    if not user:
+        logger.error("Incorrect username or password 😬")
+        raise CustomException(status.HTTP_401_UNAUTHORIZED, "Incorrect username or password 😬")
+
+    return {
+        "access_token": create_access_token(sub=user.id),
+        "token_type": "bearer",
+    }
+
+
+def authenticate(*, email: str, password: str, db: Session) -> Optional[User]:
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user:
+        return None
+    if not verify_password(password, user.hashed_password):
+        return None
+    return user

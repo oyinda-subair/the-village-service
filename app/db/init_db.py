@@ -1,4 +1,3 @@
-import logging
 from sqlalchemy.orm import Session
 from app.schemas.base import UserRole
 
@@ -6,8 +5,7 @@ import controller
 import schemas
 from db import base  # noqa: F401
 from app.core.settings import settings
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 def init_db(db: Session) -> None:
@@ -15,13 +13,13 @@ def init_db(db: Session) -> None:
         user = controller.user.get_by_email(db, email=settings.db.FIRST_SUPERUSER)
         if not user:
             user_in = schemas.UserCreate(
-                full_name="Initial Super User",
+                first_name="Initial Super User",
                 email=settings.db.FIRST_SUPERUSER,
                 is_superuser=True,
                 password=settings.db.FIRST_SUPERUSER_PW,
-                role=UserRole.admin,
+                role=UserRole.ADMIN,
             )
-            user = controller.user.create(db, obj_in=user_in)  # noqa: F841
+            user = controller.user.create(db=db, obj_in=user_in)  # noqa: F841
         else:
             logger.warning(
                 "Skipping creating superuser. User with email "
@@ -31,5 +29,5 @@ def init_db(db: Session) -> None:
         logger.warning(
             "Skipping creating superuser.  FIRST_SUPERUSER needs to be "
             "provided as an env variable. "
-            "e.g.  FIRST_SUPERUSER=admin@api.antoniaandgrace.com"
+            "e.g.  FIRST_SUPERUSER=email@email.com"
         )

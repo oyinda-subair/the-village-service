@@ -1,61 +1,34 @@
-from typing import Any, Optional
+from typing import Any
 import uuid
 
 from fastapi import APIRouter, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm.session import Session
 
 from app import controller
 from app import schemas
 from app.api import deps
-from app.core.authentication import create_access_token
 from app.core.init_logger import logger
-from app.core.security import verify_password
 from app.core.exception_handler import CustomException
 from app.models.user import User
-from app.schemas.user import Token
 from loguru import logger
+
+from app.schemas.user import ShortUserResponse
 
 
 router = APIRouter()
 
 
-@router.post("/signup", response_model=schemas.User, status_code=201)
-def create_user_signup(
-    *,
-    db: Session = Depends(deps.get_db),
-    user_in: schemas.UserCreate,
-) -> Any:
-
-    user = db.query(User).filter(User.email == user_in.email).first()
-    if user:
-        logger.error("The user with this email already exists in the system")
-        raise CustomException(
-            code=status.HTTP_409_CONFLICT,
-            message="The user with this email already exists in the system",
-        )
-    user = controller.user.create(db=db, obj_in=user_in)
-
-    return user
-
-
-@router.post("/login", response_model=Token)
-def user_login(db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
-    user = authenticate(email=form_data.username, password=form_data.password, db=db)
-    if not user:
-        logger.error("Incorrect username or password 😬")
-        raise CustomException(status.HTTP_401_UNAUTHORIZED, "Incorrect username or password 😬")
-
-    return {
-        "access_token": create_access_token(sub=user.id),
-        "token_type": "bearer",
-    }
-
-
-@router.get("/me", response_model=schemas.User)
+@router.get("/me", response_model=schemas.ShortUserResponse)
 def read_users_me(current_user: User = Depends(deps.get_current_user)):
     user = current_user
-    return user
+    data = ShortUserResponse(
+        first_name=user.first_name,
+        surname=user.surname,
+        email=user.email,
+        is_superuser=user.is_superuser,
+        role=user.role
+    )
+    return data
 
 
 @router.put("/{user_id}", response_model=schemas.User, status_code=200)
@@ -74,15 +47,6 @@ def delete_user(
         user_id: str, current_user: User = Depends(deps.get_current_user)) -> Any:
     _ = _get_user(db, uuid.UUID(user_id), current_user.id)
     return controller.user.delete(db=db, id=uuid.UUID(user_id))
-
-
-def authenticate(*, email: str, password: str, db: Session) -> Optional[User]:
-    user = db.query(User).filter(User.email == email).first()
-    if not user:
-        return None
-    if not verify_password(password, user.hashed_password):
-        return None
-    return user
 
 
 def _get_user(db: Session, id: uuid.UUID, current_user_id: uuid.UUID) -> Any:

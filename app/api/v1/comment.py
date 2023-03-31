@@ -10,7 +10,7 @@ from app.api import deps
 from app.core.provider.previledge_checker import PreviledgeChecker
 from app.models.user import User
 from app.schemas.comment import CommentResponse
-from app.schemas.common import CommonQueryParams, DataResponseModel
+from app.schemas.common import CommonQueryParams, DataResponse
 
 router = APIRouter()
 
@@ -29,7 +29,7 @@ def create_comment(*,
 
 
 @router.get(
-    '/', response_model=DataResponseModel[schemas.ListCommentResponse],
+    '/', response_model=DataResponse[schemas.ListCommentResponse],
     status_code=status.HTTP_200_OK)
 def get_comments(*,
                  post_id: str,
@@ -37,7 +37,7 @@ def get_comments(*,
                  db: Session = Depends(deps.get_db)):
 
     comments = controller.comment.get_multi_comments(db, post_id=post_id, skip=common.skip, limit=common.limit)
-    data = DataResponseModel(success=True, data=schemas.ListCommentResponse(results=len(comments), comments=comments))
+    data = DataResponse(success=True, data=schemas.ListCommentResponse(results=len(comments), comments=comments))
     return data
 
 
@@ -56,7 +56,7 @@ async def update_comment(
         comment_id: str, comment_in: schemas.UpdateComment, user: User = Depends(deps.get_current_user)):
     comment = controller.comment.get(db, comment_id)
 
-    await PreviledgeChecker.owner_can_make_update(db, comment.user_id, user)
+    await PreviledgeChecker.owner_can_view_data(db, comment.user_id, user)
 
     updated_comment = controller.comment.update(db, db_obj=comment, obj_in=comment_in)
     return updated_comment
@@ -68,6 +68,6 @@ async def delete_comment(
         comment_id: str, user: User = Depends(deps.get_current_user)):
     comment = controller.comment.get(db, comment_id)
 
-    await PreviledgeChecker.owner_can_make_update(db, comment.user_id, user)
+    await PreviledgeChecker.owner_can_view_data(db, comment.user_id, user)
 
     return controller.comment.delete(db, id=comment_id)
