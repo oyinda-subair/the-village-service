@@ -11,7 +11,8 @@ from app.core.security import get_password_hash
 
 class UserController(BaseController[User, UserCreate, UserUpdate]):
     def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
-        return db.query(User).filter(User.email == email).first()
+        user = db.query(User).filter(User.email == email).first()
+        return user
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
         create_data = obj_in.dict()

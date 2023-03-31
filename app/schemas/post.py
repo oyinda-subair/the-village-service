@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from app.schemas.base import PostBase, PostInDBBase
+from app.schemas.base import PostBase, PostInDBBase, UserBase
 
 
 class CreatePost(PostBase):
@@ -13,6 +13,22 @@ class CreatePost(PostBase):
 class PostResponse(PostInDBBase):
     created_at: datetime
     updated_at: datetime
+
+
+class PostFilteredUserResponse(BaseModel):
+    first_name: str
+    surname: str
+
+
+class PostFullResponse(PostInDBBase):
+    user: PostFilteredUserResponse
+    created_at: datetime
+    updated_at: datetime
+
+
+class ListPostFullResponse(BaseModel):
+    results: int
+    posts: List[PostFullResponse]
 
 
 class UpdatePost(BaseModel):

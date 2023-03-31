@@ -1,4 +1,4 @@
-from sqlalchemy import String, Column, TIMESTAMP, func, ForeignKey
+from sqlalchemy import String, Column, TIMESTAMP, func, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -11,7 +11,8 @@ class Post(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey('user.id', ondelete='CASCADE'), index=True, nullable=False)
     title = Column(String, nullable=False, index=True)
-    content = Column(String, nullable=False)
+    description = Column(Text, nullable=False)
+    content = Column(Text, nullable=False)
     category = Column(String, nullable=False)
     image_url = Column(String, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, default=func.now())

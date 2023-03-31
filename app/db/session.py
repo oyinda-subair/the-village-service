@@ -4,12 +4,12 @@ from sqlalchemy_utils import database_exists, create_database
 
 from loguru import logger
 
-from app.core.settings import settings
+from app.core.settings import settings, ENV
 
 
 connection_uri = settings.db.SQLALCHEMY_DATABASE_URI
 
-if settings.TEST_FLAG:
+if ENV == "Testing":
     connection_uri = settings.db.TEST_SQLALCHEMY_DATABASE_URL
 
 if connection_uri.startswith("postgres://"):
@@ -17,6 +17,7 @@ if connection_uri.startswith("postgres://"):
 
 engine = create_engine(
     connection_uri,
+    pool_pre_ping=True
 )
 
 if not database_exists(engine.url):

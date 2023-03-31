@@ -15,6 +15,8 @@ def setup_app_logging(*, config: Settings) -> None:
         logging_logger = logging.getLogger(logger_name)
         logging_logger.handlers = [InterceptHandler(level=config.logging.LOGGING_LEVEL)]
 
+    # logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
     logger.configure(
         handlers=[{"sink": sys.stderr, "level": config.logging.LOGGING_LEVEL}]
     )

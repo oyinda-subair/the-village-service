@@ -5,8 +5,9 @@ from fastapi import APIRouter, Depends, status
 from app import controller
 from app import schemas
 from app.api import deps
+from app.api.v1.response_helper import parse_complete_user_data, parse_complete_user_data_list
 from app.core.exception_handler import CustomException
-from app.schemas.common import DataResponseModel
+from app.schemas.common import DataListResponse, DataResponse
 
 from sqlalchemy.orm.session import Session
 from loguru import logger
@@ -15,23 +16,24 @@ router = APIRouter()
 
 
 # GET admin/users/ (all users)
-@router.get("/users", response_model=DataResponseModel[List[schemas.User]], status_code=200)
+@router.get("/users", response_model=DataListResponse[schemas.User], status_code=200)
 def fetch_all_users(
         skip: int = 0, limit: int = 100,
         *,
         db: Session = Depends(deps.get_db)) -> Any:
     users = controller.admin.get_multi(db, skip=skip, limit=limit)
-    return DataResponseModel(success=True, data=users)
+    user_list = parse_complete_user_data_list(users)
+    return DataListResponse(success=True, count=len(users), data=user_list)
 
 # GET admin/user/:id
 
 
-@router.get("/user/{user_id}", response_model=DataResponseModel[schemas.User], status_code=200)
+@router.get("/user/{user_id}", response_model=DataResponse[schemas.User], status_code=200)
 def fetch_user(
         *, db: Session = Depends(deps.get_db),
         user_id: str) -> Any:
     user = controller.admin.get(db, uuid.UUID(user_id))
-    return DataResponseModel(success=True, data=user)
+    return DataResponse(success=True, data=parse_complete_user_data(user))
 
 # PUT admin/user/:id
 

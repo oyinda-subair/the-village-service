@@ -18,7 +18,7 @@ depends_on = 'b13b7f6a65e5'
 
 
 def upgrade() -> None:
-    op.create_table('post',
+    op.create_table('comment',
                     sa.Column("id", UUID(), nullable=False, default=uuid.uuid4),
                     sa.Column("user_id", UUID(as_uuid=True), sa.ForeignKey('user.id', ondelete='CASCADE'), nullable=False),
                     sa.Column("post_id", UUID(as_uuid=True), sa.ForeignKey('post.id', ondelete='CASCADE'), nullable=False),
@@ -31,13 +31,9 @@ def upgrade() -> None:
                     )
 
     op.create_index('ix_comment_id', 'comment', ['id'], unique=False)
-    op.create_index('ix_user_id', 'comment', ['user_id'], unique=False)
-    op.create_index('ix_post_id', 'comment', ['post_id'], unique=False)
 
 
 def downgrade() -> None:
     op.drop_index(op.f('ix_comment_id'), table_name='comment')
-    op.drop_index(op.f('ix_user_id'), table_name='comment')
-    op.drop_index(op.f('ix_post_id'), table_name='comment')
 
     op.drop_table('comment')

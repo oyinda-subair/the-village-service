@@ -22,7 +22,8 @@ def upgrade() -> None:
                     sa.Column("id", UUID(), nullable=False, default=uuid.uuid4),
                     sa.Column("user_id", UUID(as_uuid=True), sa.ForeignKey('user.id', ondelete='CASCADE'), nullable=False),
                     sa.Column("title", sa.String(), nullable=False),
-                    sa.Column("content", sa.String(), nullable=False),
+                    sa.Column("description", sa.Text(), nullable=True),
+                    sa.Column("content", sa.Text(), nullable=False),
                     sa.Column("category", sa.String(), nullable=False),
                     sa.Column("image_url", sa.String(), nullable=True),
                     sa.Column("created_at", sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
@@ -32,7 +33,6 @@ def upgrade() -> None:
                     sa.UniqueConstraint('title')
                     )
 
-    # op.create_index('ix_post_id', 'post', ['id'], unique=False)
     op.create_index('ix_user_id', 'post', ['user_id'], unique=False)
     op.create_index('ix_post_title', 'post', ['title'], unique=False)
     # op.create_unique_constraint('unique_title', 'post', ['title'])

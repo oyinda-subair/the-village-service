@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import ExceptionMiddleware
 
 from app.api.routes import api_router
-from app.core.settings import settings
+from app.core.settings import settings, ENV
 from app.core.init_logger import setup_app_logging
 from app.core.exception_handler import CustomException
 import sys
@@ -36,7 +36,7 @@ def root() -> dict:
     """
     Root GET
     """
-    return {"msg": "Hello, World!"}
+    return {"msg": "Hello, World!", "environment": ENV}
 
 
 @app.exception_handler(CustomException)

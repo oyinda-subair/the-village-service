@@ -33,6 +33,7 @@ class BackendCorsSetting(BaseSettings):
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
         "http://localhost:3000",
+        "http://127.0.0.1:5173",
         "http://localhost:8001",  # type: ignore
         "http://localhost:9000",  # type: ignore
     ]
@@ -55,10 +56,10 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     JWT_SECRET: str = Config.JWT_SECRET
     ALGORITHM: str = "HS256"
+    ENVIRONMENT: str = Config.ENVIRONMENT
 
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
-    TEST_FLAG = True if os.environ.get("TEST_FLAG") == "true" else False
 
     logging: LoggingSettings = LoggingSettings()
     db: DBSettings = DBSettings()
@@ -71,3 +72,11 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+RUNTIME_ENV = {
+    "dev": "Development",
+    "test": "Testing",
+    "prod": "Production"
+}
+
+ENV = RUNTIME_ENV[settings.ENVIRONMENT]
