@@ -17,8 +17,8 @@ load_dotenv(dotenv_path)
 
 
 class DBSettings(BaseSettings):
-    SQLALCHEMY_DATABASE_URI: str = Config.DATABASE_URI
-    TEST_SQLALCHEMY_DATABASE_URL = os.environ.get("TEST_DATABASE_URI")
+    DATABASE_URL: str = Config.DATABASE_URL
+    TEST_DATABASE_URL = os.environ.get("TEST_DB_URL")
     FIRST_SUPERUSER: EmailStr = os.environ.get("FIRST_SUPERUSER")
     FIRST_SUPERUSER_PW: str = os.environ.get("FIRST_SUPERUSER_PW")
 
@@ -41,7 +41,7 @@ class BackendCorsSetting(BaseSettings):
     # Origins that match this regex OR are in the above list are allowed
     BACKEND_CORS_ORIGIN_REGEX: Optional[
         str
-    ] = "https.*\.(netlify.app|herokuapp.com)"  # noqa: W605
+    ] = ""  # noqa: W605
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
@@ -75,7 +75,7 @@ settings = Settings()
 
 RUNTIME_ENV = {
     "dev": "Development",
-    "test": "Testing",
+    "test": "Test",
     "prod": "Production"
 }
 
