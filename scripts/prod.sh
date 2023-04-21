@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Heroku postgres addon
-export SQLALCHEMY_DATABASE_URI=${DATABASE_URI}
+export DATABASE_URL=${DATABASE_URL}
 
 # If there's a prestart.sh script in the /app directory or other path specified, run it before starting
 PRE_START_PATH=${PRE_START_PATH:-/app/prestart.sh}
@@ -20,4 +20,5 @@ export BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
 
 
 # run gunicorn
-exec gunicorn --bind $HOST:$PORT "$APP_MODULE" -k uvicorn.workers.UvicornWorker
+# exec gunicorn --bind $HOST:$PORT "$APP_MODULE" -k uvicorn.workers.UvicornWorker
+ENVIRONMENT=prod gunicorn --bind $HOST:$PORT "$APP_MODULE" -k uvicorn.workers.UvicornWorker
