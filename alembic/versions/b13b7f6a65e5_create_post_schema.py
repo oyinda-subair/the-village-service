@@ -24,7 +24,7 @@ def upgrade() -> None:
                     sa.Column("title", sa.String(), nullable=False),
                     sa.Column("description", sa.Text(), nullable=True),
                     sa.Column("content", sa.Text(), nullable=False),
-                    sa.Column("category", sa.String(), nullable=False),
+                    sa.Column("category", sa.String(), nullable=True),
                     sa.Column("image_url", sa.String(), nullable=True),
                     sa.Column("created_at", sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
                     sa.Column("updated_at", sa.TIMESTAMP, nullable=True, server_default=sa.func.now()),
