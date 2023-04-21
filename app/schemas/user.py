@@ -44,3 +44,8 @@ class TokenData(BaseModel):
 
 class ShortUserResponse(UserBase):
     email: EmailStr
+
+
+class UserRegistrationToken(Token):
+    data: ShortUserResponse
+    success: bool

@@ -1,5 +1,11 @@
 FROM --platform=linux/amd64 python:3.9
 
+ENV PIP_ROOT_USER_ACTION=ignore
+RUN pip install --upgrade pip
+RUN apt-get update \
+    && apt-get -y install libpq-dev gcc \
+    && pip install psycopg2
+
 # create the app user
 RUN addgroup --system app && adduser --system --group app
 
@@ -46,4 +52,5 @@ USER app
 
 # Run the run script, it will check for an /app/prestart.sh script (e.g. for migrations)
 # And then will start Uvicorn
+ENV PYTHONPATH=$PWD
 CMD ["./scripts/prod.sh"]

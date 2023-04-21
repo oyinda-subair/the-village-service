@@ -11,12 +11,10 @@ on:
 env:
     HOSTNAME: 0.0.0.0
     PORT: 8001
-    ENV: test
     ENVIRONMENT: test
     JWT_SECRET: ${{ secrets.JWT_SECRET }}
-    DATABASE_URI: ${{ secrets.DATABASE_URI }}
-    TEST_DATABASE_URI: ${{ secrets.TEST_DATABASE_URI }}
-    TEST_FLAG: true
+    DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    TEST_DB_URL: ${{ secrets.TEST_DATABASE_URL }}
     POSTGRES_DB: ${{ secrets.DATABASE_NAME }}
     POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
     POSTGRES_USER: ${{ secrets.DATABASE_USER }}
@@ -28,15 +26,15 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: ["3.9", "3.10"]
+        python-version: ["3.11"]
 
     services:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_DB: the_village_test
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
+          POSTGRES_DB: the_villagers_test
+          POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.DATABASE_USER }}
           POSTGRES_HOST: 127.0.0.1
         ports:
           - 5432:5432
@@ -54,17 +52,10 @@ jobs:
         # Display the Python version being used
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
-        # Install the poetry
-      - name: cache poetry install
-        uses: actions/cache@v2
-        with:
-          path: ~/.local
-          key: poetry-1.1.13-0
 
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.1.13
           virtualenvs-create: true
           virtualenvs-in-project: true
 
@@ -93,4 +84,5 @@ jobs:
 
       - name: Runnning app tests
         run: |
-          TEST_FLAG=true poetry run pytest
+          source .venv/bin/activate
+          poetry run pytest

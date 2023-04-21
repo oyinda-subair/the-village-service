@@ -13,7 +13,8 @@ def init_db(db: Session) -> None:
         user = controller.user.get_by_email(db, email=settings.db.FIRST_SUPERUSER)
         if not user:
             user_in = schemas.UserCreate(
-                first_name="Initial Super User",
+                first_name="Super User",
+                surname="Initial",
                 email=settings.db.FIRST_SUPERUSER,
                 is_superuser=True,
                 password=settings.db.FIRST_SUPERUSER_PW,

@@ -31,9 +31,3 @@ def get_random_sentence():
 
     l = [nouns, verbs, adj, adv]
     return ''.join([random.choice(i) for i in l])
-
-
-# TEST_SQLALCHEMY_DATABASE_URL = os.environ.get("TEST_DATABASE_URI")
-
-# engine = create_engine(TEST_SQLALCHEMY_DATABASE_URL)
-# TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

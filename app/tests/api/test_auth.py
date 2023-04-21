@@ -13,7 +13,7 @@ def test_register_user(client):
     # Then
     assert response.status_code == 201
     for key in data.keys():
-        assert key in ["success", "data"]
+        assert key in ["access_token", "token_type", "success", "data"]
 
 
 def test_user_login(client):
