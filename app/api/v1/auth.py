@@ -13,13 +13,13 @@ from app.core.security import verify_password
 from app.core.exception_handler import CustomException
 from app.models.user import User
 from app.schemas.common import DataResponse
-from app.schemas.user import ShortUserResponse, Token
+from app.schemas.user import ShortUserResponse, Token, UserRegistrationToken
 from loguru import logger
 
 router = APIRouter()
 
 
-@router.post("/register", response_model=DataResponse[schemas.ShortUserResponse], status_code=201)
+@router.post("/register", response_model=UserRegistrationToken, status_code=201)
 def register_user(
     *,
     db: Session = Depends(deps.get_db),
@@ -42,7 +42,13 @@ def register_user(
         role=user.role
     )
 
-    return DataResponse(success=True, data=data)
+    result = {
+        "access_token": create_access_token(sub=user.id),
+        "token_type": "bearer",
+        **DataResponse(success=True, data=data).dict()
+    }
+
+    return result
 
 
 @router.post("/login", response_model=Token)

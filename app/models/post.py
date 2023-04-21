@@ -11,10 +11,10 @@ class Post(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey('user.id', ondelete='CASCADE'), index=True, nullable=False)
     title = Column(String, nullable=False, index=True)
-    description = Column(Text, nullable=False)
+    description = Column(Text, nullable=True)
     content = Column(Text, nullable=False)
-    category = Column(String, nullable=False)
-    image_url = Column(String, nullable=False)
+    category = Column(String, nullable=True)
+    image_url = Column(String, nullable=True)
     created_at = Column(TIMESTAMP, nullable=False, default=func.now())
     updated_at = Column(TIMESTAMP, nullable=True, default=func.now())
 
