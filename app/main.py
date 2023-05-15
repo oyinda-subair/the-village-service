@@ -19,17 +19,6 @@ setup_app_logging(config=settings)
 root_router = APIRouter()
 app = FastAPI(title="The Village API", openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
-# Set all CORS enabled origins
-if settings.cors.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.cors.BACKEND_CORS_ORIGINS],
-        allow_origin_regex=settings.cors.BACKEND_CORS_ORIGIN_REGEX,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
 
 @root_router.get("/healthchecker", status_code=200)
 def root() -> dict:
@@ -37,6 +26,19 @@ def root() -> dict:
     Root GET
     """
     return {"msg": "Hello, World!", "environment": ENV}
+
+
+# Set all CORS enabled origins
+if settings.cors.BACKEND_CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in settings.cors.BACKEND_CORS_ORIGINS],
+        allow_origin_regex=settings.cors.BACKEND_CORS_ORIGIN_REGEX,
+        allow_credentials=True,
+        allow_methods=settings.cors.BACKEND_CORS_ALLOWED_METHODS,
+        allow_headers=["*"],
+        expose_headers=["*"]
+    )
 
 
 @app.exception_handler(CustomException)

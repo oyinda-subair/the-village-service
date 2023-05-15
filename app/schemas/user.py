@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Optional
+import uuid
 
 from pydantic import BaseModel, EmailStr
 from app.schemas.base import UserBase, UserInDBBase
@@ -42,7 +43,8 @@ class TokenData(BaseModel):
     user_id: Optional[str] = None
 
 
-class ShortUserResponse(UserBase):
+class ShortUserResponse(UserInDBBase):
+    id: Optional[uuid.UUID] = None
     email: EmailStr
 
 

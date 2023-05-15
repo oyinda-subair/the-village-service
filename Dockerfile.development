@@ -42,5 +42,6 @@ USER app
 RUN whoami
 
 ENV PYTHONPATH=$PWD
+EXPOSE 8001
 
 CMD ["./scripts/dev.sh"]

@@ -25,43 +25,51 @@ def register_user(
     db: Session = Depends(deps.get_db),
     user_in: schemas.UserCreate,
 ) -> Any:
-
-    user = db.query(User).filter(User.email == user_in.email).first()
-    if user:
-        logger.error("The user with this email already exists in the system")
-        raise CustomException(
-            code=status.HTTP_409_CONFLICT,
-            message="The user with this email already exists in the system",
+    try:
+        user = db.query(User).filter(User.email == user_in.email).first()
+        if user:
+            logger.error("The user with this email already exists in the system")
+            raise CustomException(
+                code=status.HTTP_409_CONFLICT,
+                message="The user with this email already exists in the system",
+            )
+        user = controller.user.create(db=db, obj_in=user_in)
+        data = ShortUserResponse(
+            id=user.id,
+            first_name=user.first_name,
+            surname=user.surname,
+            email=user.email,
+            is_superuser=user.is_superuser,
+            role=user.role
         )
-    user = controller.user.create(db=db, obj_in=user_in)
-    data = ShortUserResponse(
-        first_name=user.first_name,
-        surname=user.surname,
-        email=user.email,
-        is_superuser=user.is_superuser,
-        role=user.role
-    )
 
-    result = {
-        "access_token": create_access_token(sub=user.id),
-        "token_type": "bearer",
-        **DataResponse(success=True, data=data).dict()
-    }
+        result = {
+            "access_token": create_access_token(sub=user.id),
+            "token_type": "bearer",
+            **DataResponse(success=True, data=data).dict()
+        }
 
-    return result
+        return result
+    except Exception as e:
+        logger.error(f"Internal Server Error #{e}")
+        raise CustomException(code=500, message="Oop! An Error has occured")
 
 
 @router.post("/login", response_model=Token)
 def user_login(db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
-    user = authenticate(email=form_data.username, password=form_data.password, db=db)
-    if not user:
-        logger.error("Incorrect username or password 😬")
-        raise CustomException(status.HTTP_401_UNAUTHORIZED, "Incorrect username or password 😬")
+    try:
+        user = authenticate(email=form_data.username, password=form_data.password, db=db)
+        if not user:
+            logger.error("Incorrect username or password 😬")
+            raise CustomException(status.HTTP_401_UNAUTHORIZED, "Incorrect username or password 😬")
 
-    return {
-        "access_token": create_access_token(sub=user.id),
-        "token_type": "bearer",
-    }
+        return {
+            "access_token": create_access_token(sub=user.id),
+            "token_type": "bearer",
+        }
+    except Exception as e:
+        logger.error(f"Internal Server Error #{e}")
+        raise CustomException(code=500, message="Oop! An Error has occured")
 
 
 def authenticate(*, email: str, password: str, db: Session) -> Optional[User]:
