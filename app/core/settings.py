@@ -32,9 +32,10 @@ class BackendCorsSetting(BaseSettings):
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://localhost:3000",
+        "http://localhost",
+        "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "http://localhost:8001",  # type: ignore
+        "http://0.0.0.0:5173",
         "http://localhost:9000",  # type: ignore
     ]
 
@@ -42,6 +43,11 @@ class BackendCorsSetting(BaseSettings):
     BACKEND_CORS_ORIGIN_REGEX: Optional[
         str
     ] = ""  # noqa: W605
+
+    BACKEND_CORS_ALLOWED_METHODS: List[str] = ["OPTIONS", "POST", "PUT", "GET", "DELETE", "PATCH"]
+    BACKEND_CORS_ALLOWED_HEADERS: List[str] = [
+        "Access-Control-Allow-Headers", "Origin", "Cache-Control", "Accept", "X-Access-Token", "X-Requested-With",
+        "Content-Type", "Access-Control-Request-Method"]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
