@@ -72,14 +72,14 @@ def test_get_all_posts(client):
     user = UserFactory(hashed_password=get_password_hash(get_random_string()))
     PostFactory(user=user)
     PostFactory(user=user)
-    post3 = PostFactory()
+    PostFactory()
 
     token = generate_token(user)
     header = {
         'Authorization': 'Bearer {}'.format(token['access_token'])
     }
 
-    response = client.get(f"{settings.API_V1_STR}/posts", headers=header)
+    response = client.get(f"{settings.API_V1_STR}/posts/", headers=header)
     data = response.json()
 
     assert response.status_code == 200
