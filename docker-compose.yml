@@ -22,6 +22,7 @@ services:
       - FIRST_SUPERUSER_PW=${FIRST_SUPERUSER_PW}
       - WATCHFILES_FORCE_POLLING=true
       - ENVIRONMENT=dev
+      - USE_NGROK=False
     env_file:
       - .env
 
@@ -49,5 +50,18 @@ services:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: admin
     restart: unless-stopped
+
+  # ngrok:
+  #   image: ngrok/ngrok:latest
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   environment:
+  #       NGROK_AUTHTOKEN: ${AUTH_TOKEN}
+  #   command: 'http backend:8001 --domain=oyinda.ngrok.app'
+  #   volumes:
+  #     - ./ngrok.yml:/etc/ngrok.yml
+  #   ports:
+  #     - 4040:4040
 volumes:
   app-data:

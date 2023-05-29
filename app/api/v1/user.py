@@ -32,7 +32,7 @@ def read_users_me(current_user: User = Depends(deps.get_current_user)):
         )
         return data
     except Exception as e:
-        logger.error(f"Internal Server Error #{e}")
+        logger.error(f"Internal Server Error - {e}")
         raise CustomException(code=500, message="Oop! An Error has occured")
 
 
