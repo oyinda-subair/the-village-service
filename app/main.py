@@ -1,12 +1,13 @@
 from asyncio.log import logger
-from email import message
 import time
-from fastapi import FastAPI, APIRouter, Request, status
+from fastapi import FastAPI, APIRouter, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import ExceptionMiddleware
+# from starlette.middleware import Middleware
+# from starlette.middleware.cors import CORSMiddleware
 
 from app.api.routes import api_router
 from app.core.settings import settings, ENV
@@ -16,11 +17,39 @@ import sys
 
 sys.path.append('./../')
 setup_app_logging(config=settings)
+
+
+def init_webhooks(base_url):
+    # Update inbound traffic via APIs to use the public-facing ngrok URL
+    pass
+
+
+app = FastAPI(title="The Village API", openapi_url=f"{settings.API_V1_STR}/openapi.json", docs_url="/docs",
+              redoc_url="/redoc", debug=True)
+
+if settings.USE_NGROK:
+    # pyngrok should only ever be installed or initialized in a dev environment when this flag is set
+    from pyngrok import ngrok
+
+    # Get the dev server port (defaults to 8000 for Uvicorn, can be overridden with `--port`
+    # when starting the server
+    port = sys.argv[sys.argv.index("--port") + 1] if "--port" in sys.argv else 8001
+
+    # Open a ngrok tunnel to the dev server
+    public_url = ngrok.connect(port).public_url
+    logger.info("ngrok tunnel \"{}\" -> \"http://127.0.0.1:{}\"".format(public_url, port))
+
+    # Update any base URLs or webhooks to use the public ngrok URL
+    settings.BASE_URL = public_url
+    init_webhooks(public_url)
+
+
+# ... Initialize routers and the rest of our app
+
 root_router = APIRouter()
-app = FastAPI(title="The Village API", openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
 
-@root_router.get("/healthchecker", status_code=200)
+@root_router.get("/", status_code=200)
 def root() -> dict:
     """
     Root GET
@@ -28,21 +57,20 @@ def root() -> dict:
     return {"msg": "Hello, World!", "environment": ENV}
 
 
-# Set all CORS enabled origins
-if settings.cors.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.cors.BACKEND_CORS_ORIGINS],
-        allow_origin_regex=settings.cors.BACKEND_CORS_ORIGIN_REGEX,
-        allow_credentials=True,
-        allow_methods=settings.cors.BACKEND_CORS_ALLOWED_METHODS,
-        allow_headers=["*"],
-        expose_headers=["*"]
-    )
+@root_router.options("/{rest_of_path:path}")
+async def preflight_handler(request: Request, rest_of_path: str) -> Response:
+    response = Response()
+    response.headers['Access-Control-Allow-Origin'] = "http://localhost:5173"
+    response.headers['Access-Control-Allow-Credentials'] = "true"
+    response.headers['Access-Control-Allow-Methods'] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers['Access-Control-Allow-Headers'] = "Content-Type, Authorization"
+    response.headers['Access-Control-Max-Age'] = "600"
+    return response
 
 
 @app.exception_handler(CustomException)
 async def custom_exception_handler(request: Request, exc: CustomException):
+    logger.error(f"Exception Occurred! Reason -> {exc.message}")
     return JSONResponse(
         status_code=exc.code,
         content=jsonable_encoder({
@@ -60,6 +88,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     logger.error(f"OMG! The client sent invalid data!: {content}")
     return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
+app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(root_router)
+
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
@@ -69,10 +100,28 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     return response
 
+
 app.add_middleware(ExceptionMiddleware, handlers=app.exception_handlers)
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
-app.include_router(root_router)
+
+@app.middleware("http")
+async def cors_handler(request: Request, call_next):
+    response: Response = await call_next(request)
+    response.headers['Access-Control-Allow-Origin'] = "http://localhost:5173"
+    response.headers['Access-Control-Allow-Credentials'] = "true"
+    response.headers['Access-Control-Allow-Methods'] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers['Access-Control-Allow-Headers'] = "Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization, ngrok-skip-browser-warning"
+    response.headers['Access-Control-Max-Age'] = "600"
+    return response
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[str(origin) for origin in settings.cors.BACKEND_CORS_ORIGINS],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+#     max_age=3600
+# )
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 export DATABASE_URL=${DATABASE_URL}
 
 # If there's a prestart.sh script in the /app directory or other path specified, run it before starting
-PRE_START_PATH=${PRE_START_PATH:-/app/prestart.sh}
+PRE_START_PATH=${PRE_START_PATH:-/app/scripts/prestart.sh}
 echo "Checking for script in $PRE_START_PATH"
 if [ -f $PRE_START_PATH ] ; then
     echo "Running script $PRE_START_PATH"
